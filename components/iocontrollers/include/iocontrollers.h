@@ -29,21 +29,14 @@ typedef struct Input {
     bool pullUp;
 } Input;
 
-const Output RELAY1;
-
-const Output RELAY2;
-
-const Output OPTO1;
-
-const Output OPTO2;
-
-const Input SW1;
-
-const Input SW2;
-
-const Input INPUT1;
-
-const Input INPUT2;
+Output RELAY1;
+Output RELAY2;
+Output OPTO1;
+Output OPTO2;
+Input SW1;
+Input SW2;
+Input INPUT1;
+Input INPUT2;
 
 esp_err_t output_activate(const Output *output, const uint8_t value);
 
