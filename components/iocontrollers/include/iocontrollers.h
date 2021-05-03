@@ -1,4 +1,7 @@
-#include <gpio.h>
+#ifndef IO_CONTROLLERS_H
+#define IO_CONTROLLERS_H
+
+#include "driver/gpio.h"
 
 #define RELAY_1_PIN CONFIG_RELAY_1_PIN
 #define RELAY_2_PIN CONFIG_RELAY_2_PIN
@@ -9,71 +12,45 @@
 #define INPUT_1_PIN CONFIG_INPUT_1_PIN
 #define INPUT_2_PIN CONFIG_INPUT_2_PIN
 
-typedef enum switchMode {
-    SWTICH_MODE_TOGGLE;
-    SWITCH_MODE_SIMPLE;
-    SWITCH_MODE_TIMER;
-} switchMode;
+typedef enum SwitchMode {
+    SWTICH_MODE_TOGGLE,
+    SWITCH_MODE_SIMPLE,
+    SWITCH_MODE_TIMER
+} SwitchMode;
 
-typedef struct output {
+typedef struct Output {
     int pinNumber;
-    switchMode switchMode;
+    SwitchMode switchMode;
     int delayMicros;
-} output;
+} Output;
 
-typedef struct input {
+typedef struct Input {
     int pinNumber;
     bool pullUp;
-} input;
+} Input;
 
-const output RELAY1 = {
-    .pinNumber = RELAY_1_PIN,
-    .switchMode = SWITCH_MODE_SIMPLE,
-    .delayMicros = 0
-}
+const Output RELAY1;
 
-const output RELAY2 = {
-    .pinNumber = RELAY_2_PIN,
-    .switchMode = SWITCH_MODE_SIMPLE,
-    .delayMicros = 0
-}
+const Output RELAY2;
 
-const output OPTO1 = {
-    .pinNumber = OPTO_1_PIN,
-    .switchMode = SWITCH_MODE_SIMPLE,
-    .delayMicros = 0
-}
+const Output OPTO1;
 
-const output OPTO2 = {
-    .pinNumber = OPTO_2_PIN,
-    .switchMode = SWITCH_MODE_SIMPLE,
-    .delayMicros = 0
-}
+const Output OPTO2;
 
-const input SW1 {
-    .pinNumber = SW_1_PIN,
-    .pullup = true;
-}
+const Input SW1;
 
-const input SW2 {
-    .pinNumber = SW_2_PIN,
-    .pullup = true;
-}
+const Input SW2;
 
-const input INPUT1 {
-    .pinNumber = INPUT_1_PIN,
-    .pullup = true;
-}
+const Input INPUT1;
 
-const input INPUT2 {
-    .pinNumber = INPUT_2_PIN,
-    .pullup = true;
-}
+const Input INPUT2;
 
-esp_err_t output_activate(output *output, uint8_t value);
+esp_err_t output_activate(const Output *output, const uint8_t value);
 
-int input_read(input *input);
+int input_read(const Input *input);
 
-void set_output_switch_mode(output *output, switchMode mode);
+void set_output_switch_mode(Output *output, const SwitchMode mode);
 
 void init_io_controller();
+
+#endif //IO_CONTROLLERS_H
