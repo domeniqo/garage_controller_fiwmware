@@ -11,6 +11,8 @@
 #define SW_2_PIN CONFIG_SW_2_PIN
 #define INPUT_1_PIN CONFIG_INPUT_1_PIN
 #define INPUT_2_PIN CONFIG_INPUT_2_PIN
+#define GREEN_LED_1_PIN CONFIG_GREEN_LED_1_PIN
+#define GREEN_LED_2_PIN CONFIG_GREEN_LED_2_PIN
 
 typedef enum SwitchMode {
     SWTICH_MODE_TOGGLE,
@@ -37,6 +39,8 @@ Input SW1;
 Input SW2;
 Input INPUT1;
 Input INPUT2;
+const Output GREEN_LED1;
+const Output GREEN_LED2;
 
 esp_err_t output_activate(const Output *output, const uint8_t value);
 

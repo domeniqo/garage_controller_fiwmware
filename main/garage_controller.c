@@ -17,13 +17,18 @@ void app_main(void)
         printf("pinumber[%d] = %d\n\n", SW2.pinNumber, input_read(&SW2));
         if (input_read(&SW1) == 0) {
             output_activate(&RELAY1, 1);
+            output_activate(&GREEN_LED1, 1);
         } else {
             output_activate(&RELAY1, 0);
+            output_activate(&GREEN_LED1, 0);
         }
         if (input_read(&SW2) == 0) {
             output_activate(&RELAY2, 1);
+            output_activate(&GREEN_LED2, 1);
+            
         } else {
             output_activate(&RELAY2, 0);
+            output_activate(&GREEN_LED2, 0);
         }
         vTaskDelay(1000 / portTICK_RATE_MS);
     }

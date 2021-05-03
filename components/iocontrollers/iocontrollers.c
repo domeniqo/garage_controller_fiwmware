@@ -44,6 +44,18 @@ Input INPUT2 = {
     .pullUp = true
 };
 
+const Output GREEN_LED1 = {
+    .pinNumber = GREEN_LED_1_PIN,
+    .switchMode = SWITCH_MODE_SIMPLE,
+    .delayMicros = 0
+};
+
+const Output GREEN_LED2 = {
+    .pinNumber = GREEN_LED_2_PIN,
+    .switchMode = SWITCH_MODE_SIMPLE,
+    .delayMicros = 0
+};
+
 esp_err_t output_activate(const Output *output, const uint8_t value) {
     return gpio_set_level(output->pinNumber, value);
 }
@@ -60,7 +72,7 @@ void init_io_controller() {
     //set up outputs
     gpio_config_t config;
     config.intr_type = GPIO_INTR_DISABLE;
-    config.pin_bit_mask = (1U << RELAY1.pinNumber) | (1U << RELAY2.pinNumber) | (1U << OPTO1.pinNumber) | (1U << OPTO2.pinNumber);
+    config.pin_bit_mask = (1ULL << RELAY1.pinNumber) | (1ULL << RELAY2.pinNumber) | (1ULL << OPTO1.pinNumber) | (1ULL << OPTO2.pinNumber) | (1ULL << GREEN_LED1.pinNumber) | (1ULL << GREEN_LED2.pinNumber);
     config.mode = GPIO_MODE_OUTPUT;
     config.pull_up_en = 0;
     config.pull_down_en = 0;
