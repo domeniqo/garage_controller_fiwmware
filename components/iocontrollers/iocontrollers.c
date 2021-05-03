@@ -1,45 +1,45 @@
 #include "iocontrollers.h"
 
-const Output RELAY1 = {
+Output RELAY1 = {
     .pinNumber = RELAY_1_PIN,
     .switchMode = SWITCH_MODE_SIMPLE,
     .delayMicros = 0
 };
 
-const Output RELAY2 = {
+Output RELAY2 = {
     .pinNumber = RELAY_2_PIN,
     .switchMode = SWITCH_MODE_SIMPLE,
     .delayMicros = 0
 };
 
-const Output OPTO1 = {
+Output OPTO1 = {
     .pinNumber = OPTO_1_PIN,
     .switchMode = SWITCH_MODE_SIMPLE,
     .delayMicros = 0
 };
 
-const Output OPTO2 = {
+Output OPTO2 = {
     .pinNumber = OPTO_2_PIN,
     .switchMode = SWITCH_MODE_SIMPLE,
     .delayMicros = 0
 };
 
-const Input SW1 = {
+Input SW1 = {
     .pinNumber = SW_1_PIN,
     .pullUp = true
 };
 
-const Input SW2 = {
+Input SW2 = {
     .pinNumber = SW_2_PIN,
     .pullUp = true
 };
 
-const Input INPUT1 = {
+Input INPUT1 = {
     .pinNumber = INPUT_1_PIN,
     .pullUp = true
 };
 
-const Input INPUT2 = {
+Input INPUT2 = {
     .pinNumber = INPUT_2_PIN,
     .pullUp = true
 };
