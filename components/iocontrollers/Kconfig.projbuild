@@ -13,4 +13,44 @@ menu "INPUT/OUTPUT menu"
             bool "TOGGLE"
             select SWITCH_MODE_TOGGLE
     endchoice
+    config RELAY_1_PIN
+        int "Relay1 pin number"
+        default "12"
+        help
+            Relay 1 pin number.
+    config RELAY_2_PIN
+        int "Relay2 pin number"
+        default "13"
+        help
+            Relay 2 pin number.
+    config OPTO_1_PIN
+        int "Opto1 pin number"
+        default "14"
+        help
+            Opto 1 pin number.
+    config OPTO_2_PIN
+        int "Opto2 pin number"
+        default "15"
+        help
+            Opto 1 pin number.
+    config SW_1_PIN
+        int "SW1 pin number"
+        default "35"
+        help
+            SW 1 pin number.
+    config SW_2_PIN
+        int "SW2 pin number"
+        default "36"
+        help
+            SW 2 pin number.
+    config INPUT_1_PIN
+        int "INPUT1 pin number"
+        default "2"
+        help
+            INPUT 1 pin number.
+    config INPUT_2_PIN
+        int "INPUT2 pin number"
+        default "4"
+        help
+            INPUT 2 pin number.   
 endmenu
