@@ -1,0 +1,16 @@
+menu "INPUT/OUTPUT menu"
+    choice RELAY1_SWITCH_MODE
+        prompt "Relay1 mode"
+        default SWITCH_MODE_SIMPLE
+        help
+            Mode the flash chip is flashed in, as well as the default mode for the
+            binary to run in.
+
+        config RELAY1_SWITCH_MODE_SIMPLE
+            bool "ON/OFF"
+            select SWITCH_MODE_SIMPLE
+        config RELAY1_SWITCH_MODE_TOGGLE
+            bool "TOGGLE"
+            select SWITCH_MODE_TOGGLE
+    endchoice
+endmenu
