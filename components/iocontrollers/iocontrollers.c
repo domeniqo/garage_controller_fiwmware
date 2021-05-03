@@ -87,4 +87,8 @@ void init_io_controller() {
     config.pull_down_en = 0;
 
     gpio_config(&config);
+
+    config.pin_bit_mask = (1ULL << INPUT1.pinNumber) | (1ULL << INPUT2.pinNumber);
+    config.pull_up_en = true;
+    gpio_config(&config);
 }
