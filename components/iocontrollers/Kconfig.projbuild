@@ -23,6 +23,16 @@ menu "INPUT/OUTPUT menu"
         default "13"
         help
             Relay 2 pin number.
+    config GREEN_LED_1_PIN
+        int "Green LED 1 pin number"
+        default "16"
+        help
+            Green LED 1 pin number.
+    config GREEN_LED_2_PIN
+        int "Green LED 2 pin number"
+        default "32"
+        help
+            Green LED 2 pin number.
     config OPTO_1_PIN
         int "Opto1 pin number"
         default "14"
