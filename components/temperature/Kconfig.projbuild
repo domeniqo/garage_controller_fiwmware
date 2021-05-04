@@ -1,0 +1,17 @@
+menu "Temperature sensor menu"
+    config RESISTANCE_VALUE
+        int "R13 measured value (Ohms)"
+        default "30000"
+        help
+            Real measured value of resistor used in circuit. 
+    config TEMP_CORRECTION
+        int "Temperature correction (tenths of degree celsius)"
+        default "0"
+        help
+            Correction in degrees Celsius. Added within calculation of temeprature.
+    config TEMP_SENSOR_ON_PIN
+        int "Sensor ON/OFF pin"
+        default "33"
+        help
+            Pin used to turn on/off sensor. 
+endmenu
