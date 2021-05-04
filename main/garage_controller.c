@@ -5,6 +5,7 @@
 #include "iocontrollers.h"
 #include "nvs_flash.h"
 #include "protocol_examples_common.h"
+#include "temperature.h"
 
 void app_main(void)
 {
@@ -22,6 +23,9 @@ void app_main(void)
     ESP_ERROR_CHECK(output_activate(&RELAY1, 1));
     ESP_ERROR_CHECK(output_activate(&RELAY2, 1));
     ESP_ERROR_CHECK(output_activate(&OPTO1, 1));
+
+    temp_sensor_init();
+    temp_sensor_turn_on();
 
     while(1) {
         printf("pinumber[%d] = %d\n", INPUT1.pinNumber, input_read(&INPUT1));
@@ -43,6 +47,7 @@ void app_main(void)
             ESP_ERROR_CHECK(output_activate(&RELAY2, 0));
             ESP_ERROR_CHECK(output_activate(&GREEN_LED2, 0));
         }
+        printf("Temperature: %fC\n", temp_sensor_get_temperature());
         vTaskDelay(1000 / portTICK_RATE_MS);
     }
 }
