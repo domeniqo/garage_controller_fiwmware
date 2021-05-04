@@ -178,6 +178,14 @@ CONFIG_INPUT_2_PIN=4
 # end of INPUT/OUTPUT menu
 
 #
+# Temperature sensor menu
+#
+CONFIG_RESISTANCE_VALUE=29900
+CONFIG_TEMP_CORRECTION=-25
+CONFIG_TEMP_SENSOR_ON_PIN=33
+# end of Temperature sensor menu
+
+#
 # Compiler options
 #
 CONFIG_COMPILER_OPTIMIZATION_DEFAULT=y
