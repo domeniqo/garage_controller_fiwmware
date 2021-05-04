@@ -56,19 +56,19 @@ const Output GREEN_LED2 = {
     .delayMicros = 0
 };
 
-esp_err_t output_activate(const Output *output, const uint8_t value) {
+esp_err_t io_controllers_output_activate(const Output *output, const uint8_t value) {
     return gpio_set_level(output->pinNumber, value);
 }
 
-int input_read(const Input *input) {
+int io_controllers_input_read(const Input *input) {
     return gpio_get_level(input->pinNumber);
 }
 
-void set_output_switch_mode(Output *output, const SwitchMode mode) {
+void io_controllers_set_output_switch_mode(Output *output, const SwitchMode mode) {
     output->switchMode = mode;
 }
 
-void init_io_controller() {
+void io_controllers_init() {
     //set up outputs
     gpio_config_t config;
     config.intr_type = GPIO_INTR_DISABLE;

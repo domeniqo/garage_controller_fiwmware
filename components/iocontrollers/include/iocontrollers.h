@@ -42,12 +42,12 @@ Input INPUT2;
 const Output GREEN_LED1;
 const Output GREEN_LED2;
 
-esp_err_t output_activate(const Output *output, const uint8_t value);
+esp_err_t io_controllers_output_activate(const Output *output, const uint8_t value);
 
-int input_read(const Input *input);
+int io_controllers_input_read(const Input *input);
 
-void set_output_switch_mode(Output *output, const SwitchMode mode);
+void io_controllers_set_output_switch_mode(Output *output, const SwitchMode mode);
 
-void init_io_controller();
+void io_controllers_init();
 
 #endif //IO_CONTROLLERS_H
