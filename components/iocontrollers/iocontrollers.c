@@ -100,12 +100,12 @@ void io_controllers_init() {
     config.mode = GPIO_MODE_OUTPUT;
     config.pull_up_en = 0;
     config.pull_down_en = 0;
-    gpio_config(&config);
+    ESP_ERROR_CHECK(gpio_config(&config));
 
     //set up inputs/outputs -> input needed when toggle mode is active
     config.pin_bit_mask = (1ULL << RELAY1.pinNumber) | (1ULL << RELAY2.pinNumber) | (1ULL << OPTO1.pinNumber) | (1ULL << OPTO2.pinNumber);
     config.mode = GPIO_MODE_INPUT_OUTPUT;
-    gpio_config(&config);
+    ESP_ERROR_CHECK(gpio_config(&config));
 
     //set up inputs (buttons)
     config.intr_type = GPIO_INTR_ANYEDGE;
@@ -113,18 +113,18 @@ void io_controllers_init() {
     config.mode = GPIO_MODE_INPUT;
     config.pull_up_en = 0;
     config.pull_down_en = 0;
-    gpio_config(&config);
+    ESP_ERROR_CHECK(gpio_config(&config));
 
     //set up inputs (connector)
     config.pin_bit_mask = (1ULL << INPUT1.pinNumber) | (1ULL << INPUT2.pinNumber);
     config.pull_up_en = true;
-    gpio_config(&config);
+    ESP_ERROR_CHECK(gpio_config(&config));
 
     //isr setup
-    gpio_install_isr_service(0);
-    gpio_isr_handler_add(INPUT1.pinNumber, isr_handler, (void *)0x01);
-    gpio_isr_handler_add(INPUT2.pinNumber, isr_handler, (void *)0x02);
-    gpio_isr_handler_add(SW1.pinNumber, isr_handler, (void *)0x04);
-    gpio_isr_handler_add(SW2.pinNumber, isr_handler, (void *)0x08);
+    ESP_ERROR_CHECK(gpio_install_isr_service(0));
+    ESP_ERROR_CHECK(gpio_isr_handler_add(INPUT1.pinNumber, isr_handler, (void *)0x01));
+    ESP_ERROR_CHECK(gpio_isr_handler_add(INPUT2.pinNumber, isr_handler, (void *)0x02));
+    ESP_ERROR_CHECK(gpio_isr_handler_add(SW1.pinNumber, isr_handler, (void *)0x04));
+    ESP_ERROR_CHECK(gpio_isr_handler_add(SW2.pinNumber, isr_handler, (void *)0x08));
 
 }
