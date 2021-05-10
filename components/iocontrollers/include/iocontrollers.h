@@ -43,14 +43,33 @@ Input INPUT2;
 const Output GREEN_LED1;
 const Output GREEN_LED2;
 
+/***
+ * default isr handler set up isr_mask accordingly
+ * 
+ * isr_mask structure:
+ * 0b0000ABCD
+ * A - INPUT1
+ * B - INPUT2
+ * C - SW1
+ * D - SW2
+ * 
+ * */
 void isr_handler(void *value);
-
+//activates output accordignly its settings of switch mode (SIMPLE, TIMER, TOGGLE)
 esp_err_t io_controllers_output_activate(const Output *output, const uint8_t value);
-
+//just mapping function to gpio_read
 int io_controllers_input_read(const Input *input);
-
+//set up output switch mode
 void io_controllers_set_output_switch_mode(Output *output, const SwitchMode mode);
-
+/***
+ * Initialization of io pins. Pin numbers can be set in menuconfig.
+ * 
+ * Default settings are:
+ * For INPUT1, INPUT2 - input mode, pullup resistor is active, any edge interrupt
+ * For SW1, SW2 - input mode, pullup/pulldown resistor is not active, any edge interrupt
+ * For RELAY1, RELAY2, OPTO1, OPTO2 - input/output mode (to be able to toggle), no interrupts
+ * For GREEN_LED1, GREEN_LED2 - output mode, no interrupts
+ * */
 void io_controllers_init();
 
 #endif //IO_CONTROLLERS_H

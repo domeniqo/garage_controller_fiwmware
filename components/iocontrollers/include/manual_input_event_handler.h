@@ -25,10 +25,15 @@ typedef struct counter_task_args {
     void *args;
 } counter_task_args;
 
+//initialization of event handler - creating task for checking input interrupts, setting up event handler
 void manual_input_event_handler_init();
+//one time run task to evaluate whether input given in args is hold for given period of time
 void press_down_counter_task(void *arg);
+//infinity task to cehck state of inputs (whether interrupt flags were set)
 void check_inputs_task(void *arg);
+//handler of input events in normal operation mode
 void normal_mode_input_event_handler(void* event_handler_arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
+//handler of input events in menu operation mode
 void menu_mode_input_event_handler(void* event_handler_arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
 
 #endif //MANUAL_INPUT_EVENT_HANDLER_H
