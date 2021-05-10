@@ -4,6 +4,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "iocontrollers.h"
+#include "manual_input_event_handler.h"
 #include "nvs_flash.h"
 #include "protocol_examples_common.h"
 #include "temperature.h"
@@ -23,6 +24,7 @@ void app_main(void)
     //ESP_ERROR_CHECK(example_connect());
 
     io_controllers_init();
+    manual_input_event_handler_init();
 
     while(1) {
         ESP_LOGI(TAG, "main checking");
