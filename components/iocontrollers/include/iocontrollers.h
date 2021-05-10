@@ -15,7 +15,7 @@
 #define GREEN_LED_2_PIN CONFIG_GREEN_LED_2_PIN
 
 typedef enum SwitchMode {
-    SWTICH_MODE_TOGGLE,
+    SWITCH_MODE_TOGGLE,
     SWITCH_MODE_SIMPLE,
     SWITCH_MODE_TIMER
 } SwitchMode;
@@ -31,6 +31,7 @@ typedef struct Input {
     bool pullUp;
 } Input;
 
+uint8_t isr_mask;
 Output RELAY1;
 Output RELAY2;
 Output OPTO1;
@@ -41,6 +42,8 @@ Input INPUT1;
 Input INPUT2;
 const Output GREEN_LED1;
 const Output GREEN_LED2;
+
+void isr_handler(void *value);
 
 esp_err_t io_controllers_output_activate(const Output *output, const uint8_t value);
 
