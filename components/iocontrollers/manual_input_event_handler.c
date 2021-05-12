@@ -15,8 +15,8 @@ void manual_input_event_handler_init() {
     xTaskCreate(check_inputs_task, "check inputs task", 2048, NULL, uxTaskPriorityGet(NULL), NULL);
 
     //event loop init and registration
-    esp_event_loop_create_default();
-    esp_event_handler_instance_register(INPUT_BASE, ESP_EVENT_ANY_ID, normal_mode_input_event_handler, NULL, NULL);
+    //ESP_ERROR_CHECK(esp_event_loop_create_default());
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(INPUT_BASE, ESP_EVENT_ANY_ID, normal_mode_input_event_handler, NULL, NULL));
 }
 
 void generate_long_press_event(void *arg) {
