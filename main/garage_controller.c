@@ -8,7 +8,6 @@
 #include "iocontrollers.h"
 #include "manual_input_event_handler.h"
 #include "nvs_flash.h"
-#include "protocol_examples_common.h"
 #include "temperature.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
