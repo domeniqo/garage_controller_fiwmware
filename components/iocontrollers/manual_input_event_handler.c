@@ -6,6 +6,7 @@
 #include "manual_input_event_handler.h"
 
 static const char* TAG = "manual input event handler";
+counter_task_args counterArgs;
 
 void manual_input_event_handler_init() {
     //event loop init and registration
@@ -33,7 +34,6 @@ void press_down_counter_task(void *arg) {
     vTaskDelete(NULL);
 }
 
-counter_task_args counterArgs;
 
 void normal_mode_input_event_handler(void* event_handler_arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
     ESP_LOGI(TAG, "event handling %d", event_id);    
