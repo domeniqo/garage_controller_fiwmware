@@ -35,7 +35,7 @@ void mqtt_subscribed_action_event_handler(void *handler_args, esp_event_base_t b
     }
 
     strcpy(topic, relay1_id);
-    if (strncmp(strcpy(topic, "/directive/powerState"), event->topic, event->topic_len) == 0) {
+    if (strncmp(strcat(topic, "/directive/powerState"), event->topic, event->topic_len) == 0) {
         if (strncmp(event->data, "ON", event->data_len) == 0) {
             ESP_LOGD(TAG, "Turning ON relay1");
         } else if (strncmp(event->data, "OFF", event->data_len) == 0) {
