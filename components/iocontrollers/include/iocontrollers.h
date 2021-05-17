@@ -2,6 +2,7 @@
 #define IO_CONTROLLERS_H
 
 #include "driver/gpio.h"
+#include "esp_event.h"
 
 #define RELAY_1_PIN CONFIG_RELAY_1_PIN
 #define RELAY_2_PIN CONFIG_RELAY_2_PIN
@@ -13,6 +14,23 @@
 #define INPUT_2_PIN CONFIG_INPUT_2_PIN
 #define GREEN_LED_1_PIN CONFIG_GREEN_LED_1_PIN
 #define GREEN_LED_2_PIN CONFIG_GREEN_LED_2_PIN
+
+ESP_EVENT_DECLARE_BASE(INPUT_BASE);
+
+enum INPUT_EVENT_IDS {
+    SW_1_PRESSED,
+    SW_1_RELEASED,
+    SW_1_LONG_PRESS,
+    SW_2_PRESSED,
+    SW_2_RELEASED,
+    SW_2_LONG_PRESS,
+    INPUT_1_PRESSED,
+    INPUT_1_RELEASED,
+    INPUT_1_LONG_PRESS,
+    INPUT_2_PRESSED,
+    INPUT_2_RELEASED,
+    INPUT_2_LONG_PRESS
+};
 
 typedef enum SwitchMode {
     SWITCH_MODE_TOGGLE,
@@ -43,6 +61,8 @@ Input INPUT2;
 const Output GREEN_LED1;
 const Output GREEN_LED2;
 
+//infinity task to cehck state of inputs (whether interrupt flags were set)
+void check_inputs_task(void *arg);
 /***
  * default isr handler set up isr_mask accordingly
  * 

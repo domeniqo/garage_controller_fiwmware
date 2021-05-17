@@ -7,15 +7,8 @@
 
 static const char* TAG = "manual input event handler";
 
-ESP_EVENT_DEFINE_BASE(INPUT_BASE);
-
 void manual_input_event_handler_init() {
-    
-    //task for periodically checking inputs states after interrupt was called
-    xTaskCreate(check_inputs_task, "check inputs task", 2048, NULL, uxTaskPriorityGet(NULL), NULL);
-
     //event loop init and registration
-    //ESP_ERROR_CHECK(esp_event_loop_create_default());
     ESP_ERROR_CHECK(esp_event_handler_instance_register(INPUT_BASE, ESP_EVENT_ANY_ID, normal_mode_input_event_handler, NULL, NULL));
 }
 
@@ -25,8 +18,10 @@ void generate_long_press_event(void *arg) {
 }
 
 void press_down_counter_task(void *arg) {
+    //ESP_LOGI(TAG, "counter task execution start");
     counter_task_args *counterTaskArgs = (counter_task_args *) arg;
     int cnt = 0;
+    //ESP_LOGI(TAG, "reading state");
     while(io_controllers_input_read(counterTaskArgs->input) == 0 && cnt <= counterTaskArgs->max_count) {
         cnt++;
         vTaskDelay(1);
@@ -38,61 +33,21 @@ void press_down_counter_task(void *arg) {
     vTaskDelete(NULL);
 }
 
-void check_inputs_task(void *arg) {
-    while(1) {
-        if(isr_mask & 0x01) {
-            isr_mask &= 0xfe;
-            if(gpio_get_level(2)) {
-                ESP_LOGI(TAG, "in1 up");
-                esp_event_post(INPUT_BASE, INPUT_1_RELEASED, NULL, 0, portMAX_DELAY);
-            } else {
-                ESP_LOGI(TAG, "in1 down");
-                esp_event_post(INPUT_BASE, INPUT_1_PRESSED, NULL, 0, portMAX_DELAY);
-            }
-        }
-        if(isr_mask & 0x02) {
-            isr_mask &= 0xfd;
-            if(gpio_get_level(4)) {
-                ESP_LOGI(TAG, "in2 up");
-                esp_event_post(INPUT_BASE, INPUT_2_RELEASED, NULL, 0, portMAX_DELAY);
-            } else {
-                ESP_LOGI(TAG, "in2 down");
-                esp_event_post(INPUT_BASE, INPUT_2_PRESSED, NULL, 0, portMAX_DELAY);
-            }
-        }
-        if(isr_mask & 0x04) {
-            isr_mask &= 0xfb;
-            if(gpio_get_level(35)) {
-                ESP_LOGI(TAG, "sw1 up");
-                esp_event_post(INPUT_BASE, SW_1_RELEASED, NULL, 0, portMAX_DELAY);
-            } else {
-                ESP_LOGI(TAG, "sw1 down");
-                esp_event_post(INPUT_BASE, SW_1_PRESSED, NULL, 0, portMAX_DELAY);
-            }
-        }
-        if(isr_mask & 0x08) {
-            isr_mask &= 0xf7;
-            if(gpio_get_level(36)) {
-                ESP_LOGI(TAG, "sw2 up");
-                esp_event_post(INPUT_BASE, SW_2_RELEASED, NULL, 0, portMAX_DELAY);
-            } else {
-                ESP_LOGI(TAG, "sw2 down");
-                esp_event_post(INPUT_BASE, SW_2_PRESSED, NULL, 0, portMAX_DELAY);
-            }
-        }
-        vTaskDelay(30);
-    }
-}
+counter_task_args counterArgs;
 
 void normal_mode_input_event_handler(void* event_handler_arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
-    ESP_LOGI(TAG, "event handling %d", event_id);
-    counter_task_args counterArgs;
+    ESP_LOGI(TAG, "event handling %d", event_id);    
     switch(event_id) {
         case SW_1_PRESSED:
+            //ESP_LOGI(TAG, "giving input");
             counterArgs.input = &SW1;
+            //ESP_LOGI(TAG, "giving max count");
             counterArgs.max_count = 200;
+            //ESP_LOGI(TAG, "giving fn");
             counterArgs.fn_to_execute = generate_long_press_event;
+            //ESP_LOGI(TAG, "giving args");
             counterArgs.args = SW_1_LONG_PRESS;
+            //ESP_LOGI(TAG, "creating task");
             xTaskCreate(press_down_counter_task, "countdown sw1 task", 2048, (void*)(&counterArgs), 0, NULL);
             break;
         case SW_2_PRESSED:

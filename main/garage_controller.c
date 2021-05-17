@@ -20,17 +20,17 @@ static const char* TAG = "garage_controller";
 void app_main(void)
 {
     esp_log_level_set("*", ESP_LOG_INFO);
-    esp_log_level_set("esp_netif_handlers", ESP_LOG_VERBOSE);
-    ESP_ERROR_CHECK(nvs_flash_init());
-    ESP_ERROR_CHECK(esp_netif_init());
+    //esp_log_level_set("esp_netif_handlers", ESP_LOG_VERBOSE);
+    //ESP_ERROR_CHECK(nvs_flash_init());
+    //ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
     //ethernet_init();
-    wifi_init_sta();
-    mqtt_init();
+    //wifi_init_sta();
+    //mqtt_init();
     //ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_ETH_GOT_IP, &mqtt_got_ip_handler, NULL, NULL));
-    //io_controllers_init();
-    //manual_input_event_handler_init();
+    io_controllers_init();
+    manual_input_event_handler_init();
 
     //mqtt_init();
     while(1) {
