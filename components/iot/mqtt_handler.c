@@ -133,8 +133,8 @@ void measure_temperature_task(void *args) {
         temp_sensor_turn_off();
         result += temperature;
         ESP_LOGD(TAG, "Temperature is: %.2f", temperature);
-        if(counter == 5) {
-            result /= 5;
+        if(counter == 10) {
+            result /= 10;
             result = temperature_round(result);
             strcpy(topic, temp_id);
             sprintf(text_result, "%.2f", result);
@@ -143,7 +143,7 @@ void measure_temperature_task(void *args) {
             counter = 0;
             result = 0;
         }
-        vTaskDelay(300);
+        vTaskDelay(200);
     }
 }
 
