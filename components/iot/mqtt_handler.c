@@ -4,6 +4,7 @@
 #include "esp_netif.h"
 #include "freertos/FreeRTOS.h"
 #include "freeRTOS/task.h"
+#include <math.h>
 #include "mqtt_client.h"
 #include "mqtt_handler.h"
 #include <stdio.h>
@@ -34,7 +35,7 @@ void mqtt_subscribed_action_event_handler(void *handler_args, esp_event_base_t b
     }
 
     strcpy(topic, relay1_id);
-    if (strncmp(strcpy(topic, "directive/powerState"), event->topic, event->topic_len) == 0) {
+    if (strncmp(strcpy(topic, "/directive/powerState"), event->topic, event->topic_len) == 0) {
         if (strncmp(event->data, "ON", event->data_len) == 0) {
             ESP_LOGD(TAG, "Turning ON relay1");
         } else if (strncmp(event->data, "OFF", event->data_len) == 0) {
@@ -105,6 +106,20 @@ void mqtt_basic_event_handler(void *handler_args, esp_event_base_t base, int32_t
     }
 }
 
+//round to nearest half degree
+static double temperature_round(double measured_value) {
+    ESP_LOGD(TAG, "Rounding value %.2f", measured_value);
+    double mid_result = measured_value * 10;
+    int mod = (int)mid_result % 10;
+    if(mod < 3) {
+        return floor(measured_value);
+    } else if (mod < 8) {
+        return (floor(measured_value) + 0.5);
+    } else {
+        return ceil(measured_value);
+    }
+}
+
 void measure_temperature_task(void *args) {
     char topic[128];
     char text_result[10];
@@ -118,8 +133,9 @@ void measure_temperature_task(void *args) {
         temp_sensor_turn_off();
         result += temperature;
         ESP_LOGD(TAG, "Temperature is: %.2f", temperature);
-        if(counter == 10) {
-            result /= 10;
+        if(counter == 5) {
+            result /= 5;
+            result = temperature_round(result);
             strcpy(topic, temp_id);
             sprintf(text_result, "%.2f", result);
             ESP_LOGI(TAG, "Average posted temperature is: %s", text_result);
@@ -127,7 +143,7 @@ void measure_temperature_task(void *args) {
             counter = 0;
             result = 0;
         }
-        vTaskDelay(100);
+        vTaskDelay(300);
     }
 }
 
