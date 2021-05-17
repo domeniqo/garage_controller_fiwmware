@@ -124,7 +124,7 @@ void io_controllers_init() {
     ESP_ERROR_CHECK(gpio_install_isr_service(0));
     ESP_ERROR_CHECK(gpio_isr_handler_add(INPUT1.pinNumber, isr_handler, (void *)0x01));
     ESP_ERROR_CHECK(gpio_isr_handler_add(INPUT2.pinNumber, isr_handler, (void *)0x02));
-    ESP_ERROR_CHECK(gpio_isr_handler_add(SW1.pinNumber, isr_handler, (void *)0x04));
-    ESP_ERROR_CHECK(gpio_isr_handler_add(SW2.pinNumber, isr_handler, (void *)0x08));
+    //ESP_ERROR_CHECK(gpio_isr_handler_add(SW1.pinNumber, isr_handler, (void *)0x04));
+    //ESP_ERROR_CHECK(gpio_isr_handler_add(SW2.pinNumber, isr_handler, (void *)0x08));
 
 }
