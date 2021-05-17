@@ -6,6 +6,8 @@
 
 static const char* TAG = "iocontroller";
 
+ESP_EVENT_DEFINE_BASE(INPUT_BASE);
+
 void isr_handler(void *value) {
     uint8_t mask = (uint8_t)value;
     isr_mask |= mask;
@@ -70,13 +72,17 @@ const Output GREEN_LED2 = {
 esp_err_t io_controllers_output_activate(const Output *output, const uint8_t value) {
     switch (output->switchMode) {
         case SWITCH_MODE_SIMPLE: {
+            //post event
             return gpio_set_level(output->pinNumber, value);
         }
         case SWITCH_MODE_TOGGLE: {
             int lvl = gpio_get_level(output->pinNumber);
-            return gpio_set_level(output->pinNumber, (lvl ^ 1));
+            int newLvl = (lvl ^ 1);
+            //post event
+            return gpio_set_level(output->pinNumber, newLvl);
         }
         case SWITCH_MODE_TIMER: {
+            //post event
             ESP_LOGI(TAG, "timer mode is not implemented");
             break;
         }
@@ -90,6 +96,52 @@ int io_controllers_input_read(const Input *input) {
 
 void io_controllers_set_output_switch_mode(Output *output, const SwitchMode mode) {
     output->switchMode = mode;
+}
+
+void check_inputs_task(void *arg) {
+    while(1) {
+        if(isr_mask & 0x01) {
+            isr_mask &= 0xfe;
+            if(gpio_get_level(INPUT1.pinNumber)) {
+                ESP_LOGI(TAG, "in1 up");
+                esp_event_post(INPUT_BASE, INPUT_1_RELEASED, NULL, 0, portMAX_DELAY);
+            } else {
+                ESP_LOGI(TAG, "in1 down");
+                esp_event_post(INPUT_BASE, INPUT_1_PRESSED, NULL, 0, portMAX_DELAY);
+            }
+        }
+        if(isr_mask & 0x02) {
+            isr_mask &= 0xfd;
+            if(gpio_get_level(INPUT2.pinNumber)) {
+                ESP_LOGI(TAG, "in2 up");
+                esp_event_post(INPUT_BASE, INPUT_2_RELEASED, NULL, 0, portMAX_DELAY);
+            } else {
+                ESP_LOGI(TAG, "in2 down");
+                esp_event_post(INPUT_BASE, INPUT_2_PRESSED, NULL, 0, portMAX_DELAY);
+            }
+        }
+        if(isr_mask & 0x04) {
+            isr_mask &= 0xfb;
+            if(gpio_get_level(SW1.pinNumber)) {
+                ESP_LOGI(TAG, "sw1 up");
+                esp_event_post(INPUT_BASE, SW_1_RELEASED, NULL, 0, portMAX_DELAY);
+            } else {
+                ESP_LOGI(TAG, "sw1 down");
+                esp_event_post(INPUT_BASE, SW_1_PRESSED, NULL, 0, portMAX_DELAY);
+            }
+        }
+        if(isr_mask & 0x08) {
+            isr_mask &= 0xf7;
+            if(gpio_get_level(SW2.pinNumber)) {
+                ESP_LOGI(TAG, "sw2 up");
+                esp_event_post(INPUT_BASE, SW_2_RELEASED, NULL, 0, portMAX_DELAY);
+            } else {
+                ESP_LOGI(TAG, "sw2 down");
+                esp_event_post(INPUT_BASE, SW_2_PRESSED, NULL, 0, portMAX_DELAY);
+            }
+        }
+        vTaskDelay(30);
+    }
 }
 
 void io_controllers_init() {
@@ -124,7 +176,9 @@ void io_controllers_init() {
     ESP_ERROR_CHECK(gpio_install_isr_service(0));
     ESP_ERROR_CHECK(gpio_isr_handler_add(INPUT1.pinNumber, isr_handler, (void *)0x01));
     ESP_ERROR_CHECK(gpio_isr_handler_add(INPUT2.pinNumber, isr_handler, (void *)0x02));
-    //ESP_ERROR_CHECK(gpio_isr_handler_add(SW1.pinNumber, isr_handler, (void *)0x04));
-    //ESP_ERROR_CHECK(gpio_isr_handler_add(SW2.pinNumber, isr_handler, (void *)0x08));
-
+    ESP_ERROR_CHECK(gpio_isr_handler_add(SW1.pinNumber, isr_handler, (void *)0x04));
+    ESP_ERROR_CHECK(gpio_isr_handler_add(SW2.pinNumber, isr_handler, (void *)0x08));
+    
+    //task for periodically checking inputs states after interrupt was called
+    xTaskCreate(check_inputs_task, "check inputs task", 2048, NULL, uxTaskPriorityGet(NULL), NULL);
 }
