@@ -1,0 +1,4 @@
+#ifndef MQTT_HANDLER_H
+#define MQTT_HANDLER_H
+
+#endif //MQTT_HANDLER_H
