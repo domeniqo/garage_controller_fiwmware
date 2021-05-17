@@ -113,16 +113,16 @@ void measure_temperature_task(void *args) {
     int counter = 0;
     while(1) {
         counter++;
-        //temp_sensor_turn_on();
+        temp_sensor_turn_on();
         temperature = temp_sensor_get_temperature();
-        //temp_sensor_turn_off();
+        temp_sensor_turn_off();
         result += temperature;
-        ESP_LOGI(TAG, "Temperature is: %.2f", temperature);
+        ESP_LOGD(TAG, "Temperature is: %.2f", temperature);
         if(counter == 10) {
             result /= 10;
             strcpy(topic, temp_id);
             sprintf(text_result, "%.2f", result);
-            ESP_LOGI(TAG, "Average temperature is: %s", text_result);
+            ESP_LOGI(TAG, "Average posted temperature is: %s", text_result);
             esp_mqtt_client_publish(client, strcat(topic, "/report/temperature"), text_result, 0, 1, 1);
             counter = 0;
             result = 0;
@@ -151,7 +151,6 @@ void mqtt_init(void)
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_basic_event_handler, NULL);
     esp_mqtt_client_register_event(client, MQTT_EVENT_DATA, mqtt_subscribed_action_event_handler, NULL);
     temp_sensor_init();
-    temp_sensor_turn_on();
     xTaskCreate(measure_temperature_task, "periodical temp check", 2048, NULL, uxTaskPriorityGet(NULL), NULL);
     esp_mqtt_client_start(client);
 }
