@@ -55,6 +55,7 @@ typedef enum SwitchMode {
 } SwitchMode;
 
 typedef struct Output {
+    const char *name;
     int pinNumber;
     SwitchMode switchMode;
     int delayMicros;

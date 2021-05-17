@@ -14,24 +14,28 @@ void isr_handler(void *value) {
 }
 
 Output RELAY1 = {
+    .name = "RELAY1",
     .pinNumber = RELAY_1_PIN,
     .switchMode = SWITCH_MODE_SIMPLE,
     .delayMicros = 0
 };
 
 Output RELAY2 = {
+    .name = "RELAY2",
     .pinNumber = RELAY_2_PIN,
     .switchMode = SWITCH_MODE_SIMPLE,
     .delayMicros = 0
 };
 
 Output OPTO1 = {
+    .name = "OPTO1",
     .pinNumber = OPTO_1_PIN,
     .switchMode = SWITCH_MODE_SIMPLE,
     .delayMicros = 0
 };
 
 Output OPTO2 = {
+    .name = "OPTO2",
     .pinNumber = OPTO_2_PIN,
     .switchMode = SWITCH_MODE_SIMPLE,
     .delayMicros = 0
@@ -58,12 +62,14 @@ Input INPUT2 = {
 };
 
 const Output GREEN_LED1 = {
+    .name = "GREEN_LED1",
     .pinNumber = GREEN_LED_1_PIN,
     .switchMode = SWITCH_MODE_SIMPLE,
     .delayMicros = 0
 };
 
 const Output GREEN_LED2 = {
+    .name = "GREEN_LED2",
     .pinNumber = GREEN_LED_2_PIN,
     .switchMode = SWITCH_MODE_SIMPLE,
     .delayMicros = 0
