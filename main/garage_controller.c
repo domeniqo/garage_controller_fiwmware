@@ -77,13 +77,14 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 static void mqtt_app_start(void)
 {
     esp_mqtt_client_config_t mqtt_cfg = {
-        .uri = "mqtt://broker.mqttdashboard.com:1883",
+        .uri = "mqtt://192.168.1.22:1883",
         .client_id = "6048e887d1c2d77d1bd58f16",
         .lwt_msg = "false",
         .lwt_msg_len = 0,
         .lwt_qos = 2,
         .lwt_retain = 1,
-        .lwt_topic = "6048e887d1c2d77d1bd58f16/report/online"
+        .lwt_topic = "6048e887d1c2d77d1bd58f16/report/online",
+        .keepalive = 10
     };
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
