@@ -13,7 +13,11 @@
 
 static const char* temp_id = "6050bdd81d065424b548c632";
 static const char* relay1_id = "6048e887d1c2d77d1bd58f16";
+static const char* relay2_id = "6048e887d1c2d77d1bd58f17";
+static const char* opto1_id = "6048e887d1c2d77d1bd58f18";
+static const char* opto2_id = "6048e887d1c2d77d1bd58f19";
 static const char* door_magnet_id = "604907d8d1c2d77d1bd58f1f";
+static const char* door_magnet2_id = "604907d8d1c2d77d1bd58f1g";
 esp_mqtt_client_handle_t client;
 
 static const char* TAG = "mqtt_handler";
@@ -42,6 +46,45 @@ void mqtt_subscribed_action_event_handler(void *handler_args, esp_event_base_t b
         } else if (strncmp(event->data, "OFF", event->data_len) == 0) {
             ESP_LOGD(TAG, "Turning OFF relay1");
             io_controllers_output_activate(&RELAY1, 0);
+        } else {
+            goto fail;
+        }
+        return;
+    }
+    strcpy(topic, relay2_id);
+    if (strncmp(strcat(topic, "/directive/powerState"), event->topic, event->topic_len) == 0) {
+        if (strncmp(event->data, "ON", event->data_len) == 0) {
+            ESP_LOGD(TAG, "Turning ON relay2");
+            io_controllers_output_activate(&RELAY2, 1);
+        } else if (strncmp(event->data, "OFF", event->data_len) == 0) {
+            ESP_LOGD(TAG, "Turning OFF relay2");
+            io_controllers_output_activate(&RELAY2, 0);
+        } else {
+            goto fail;
+        }
+        return;
+    }
+    strcpy(topic, opto1_id);
+    if (strncmp(strcat(topic, "/directive/powerState"), event->topic, event->topic_len) == 0) {
+        if (strncmp(event->data, "ON", event->data_len) == 0) {
+            ESP_LOGD(TAG, "Turning ON opto1");
+            io_controllers_output_activate(&OPTO1, 1);
+        } else if (strncmp(event->data, "OFF", event->data_len) == 0) {
+            ESP_LOGD(TAG, "Turning OFF opto1");
+            io_controllers_output_activate(&OPTO1, 0);
+        } else {
+            goto fail;
+        }
+        return;
+    }
+    strcpy(topic, opto2_id);
+    if (strncmp(strcat(topic, "/directive/powerState"), event->topic, event->topic_len) == 0) {
+        if (strncmp(event->data, "ON", event->data_len) == 0) {
+            ESP_LOGD(TAG, "Turning ON opto2");
+            io_controllers_output_activate(&OPTO2, 1);
+        } else if (strncmp(event->data, "OFF", event->data_len) == 0) {
+            ESP_LOGD(TAG, "Turning OFF opto2");
+            io_controllers_output_activate(&OPTO2, 0);
         } else {
             goto fail;
         }
@@ -127,6 +170,36 @@ void mqtt_outputs_publish_handler(void* event_handler_arg, esp_event_base_t even
             msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
             ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
             break;
+        case RELAY2_ON:
+            strcpy(topic, relay2_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+        case RELAY2_OFF:
+            strcpy(topic, relay2_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+        case OPTO1_ON:
+            strcpy(topic, opto1_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+        case OPTO1_OFF:
+            strcpy(topic, opto1_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+        case OPTO2_ON:
+            strcpy(topic, opto2_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+        case OPTO2_OFF:
+            strcpy(topic, opto2_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
     }
 }
 
@@ -146,6 +219,16 @@ void mqtt_inputs_publish_handler(void* event_handler_arg, esp_event_base_t event
             break;
         case INPUT_1_RELEASED:
             strcpy(topic, door_magnet_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "false", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+        case INPUT_2_PRESSED:
+            strcpy(topic, door_magnet2_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "true", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+        case INPUT_2_RELEASED:
+            strcpy(topic, door_magnet2_id);
             msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "false", 0, 1, 1);
             ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
             break;
@@ -183,7 +266,7 @@ void measure_temperature_task(void *args) {
             result /= 20;
             result = temperature_round(result);
             strcpy(topic, temp_id);
-            sprintf(text_result, "%.2f", result);
+            sprintf(text_result, "%.1f", result);
             ESP_LOGI(TAG, "Average posted temperature is: %s", text_result);
             esp_mqtt_client_publish(client, strcat(topic, "/report/temperature"), text_result, 0, 1, 1);
             counter = 0;
