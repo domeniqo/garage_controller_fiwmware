@@ -345,7 +345,7 @@ void mqtt_init(void)
         .lwt_msg_len = 0,
         .lwt_qos = 2,
         .lwt_retain = 1,
-        .keepalive = 10
+        .keepalive = 5
     };
     client = esp_mqtt_client_init(&mqtt_cfg);
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_basic_event_handler, NULL);
