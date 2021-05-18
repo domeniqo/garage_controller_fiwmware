@@ -95,6 +95,53 @@ void mqtt_subscribed_action_event_handler(void *handler_args, esp_event_base_t b
         ESP_LOGE(TAG, "Unknown topic \'%.*s\' with msg \'%.*s\'", event->topic_len, event->topic, event->data_len, event->data);
 }
 
+void report_current_state(esp_mqtt_client_handle_t client) {
+    char topic[128];
+    int state;
+    strcpy(topic, relay1_id);
+    state = gpio_get_level(RELAY1.pinNumber);
+    if (state == 1) {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
+    } else {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
+    }
+    strcpy(topic, relay2_id);
+    state = gpio_get_level(RELAY2.pinNumber);
+    if (state == 1) {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
+    } else {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
+    }
+    strcpy(topic, opto1_id);
+    state = gpio_get_level(OPTO1.pinNumber);
+    if (state == 1) {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
+    } else {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
+    }
+    strcpy(topic, opto2_id);
+    state = gpio_get_level(OPTO2.pinNumber);
+    if (state == 1) {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
+    } else {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
+    }
+    strcpy(topic, door_magnet_id);
+    state = gpio_get_level(INPUT1.pinNumber);
+    if (state == 1) {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "false", 0, 1, 1);
+    } else {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "true", 0, 1, 1);
+    }
+    strcpy(topic, door_magnet2_id);
+    state = gpio_get_level(INPUT2.pinNumber);
+    if (state == 1) {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "false", 0, 1, 1);
+    } else {
+        esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "true", 0, 1, 1);
+    }
+}
+
 void mqtt_basic_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
     ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
@@ -105,16 +152,12 @@ void mqtt_basic_event_handler(void *handler_args, esp_event_base_t base, int32_t
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
         char topic[128];
+        //report online status (relay 1 is used as primary id - last will message)
         strcpy(topic, relay1_id);
         msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/online"), "true", 0, 1, 1);
         ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-        strcpy(topic, temp_id);
-        msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/online"), "true", 0, 1, 1);
-        ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-        strcpy(topic, door_magnet_id);
-        msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/online"), "true", 0, 1, 1);
-        ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
 
+        //subscribe to topics
         strcpy(topic, relay1_id);
         msg_id = esp_mqtt_client_subscribe(client, strcat(topic, "/directive/powerState"), 1);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
@@ -127,6 +170,9 @@ void mqtt_basic_event_handler(void *handler_args, esp_event_base_t base, int32_t
         strcpy(topic, opto2_id);
         msg_id = esp_mqtt_client_subscribe(client, strcat(topic, "/directive/powerState"), 1);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+
+        //report current state
+        report_current_state(client);
         break;
     case MQTT_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");

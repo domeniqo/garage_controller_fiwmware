@@ -19,10 +19,8 @@ void generate_long_press_event(void *arg) {
 }
 
 void press_down_counter_task(void *arg) {
-    //ESP_LOGI(TAG, "counter task execution start");
     counter_task_args *counterTaskArgs = (counter_task_args *) arg;
     int cnt = 0;
-    //ESP_LOGI(TAG, "reading state");
     while(io_controllers_input_read(counterTaskArgs->input) == 0 && cnt <= counterTaskArgs->max_count) {
         cnt++;
         vTaskDelay(1);
@@ -39,15 +37,10 @@ void normal_mode_input_event_handler(void* event_handler_arg, esp_event_base_t e
     ESP_LOGI(TAG, "event handling %d", event_id);    
     switch(event_id) {
         case SW_1_PRESSED:
-            //ESP_LOGI(TAG, "giving input");
             counterArgs.input = &SW1;
-            //ESP_LOGI(TAG, "giving max count");
             counterArgs.max_count = 200;
-            //ESP_LOGI(TAG, "giving fn");
             counterArgs.fn_to_execute = generate_long_press_event;
-            //ESP_LOGI(TAG, "giving args");
             counterArgs.args = SW_1_LONG_PRESS;
-            //ESP_LOGI(TAG, "creating task");
             xTaskCreate(press_down_counter_task, "countdown sw1 task", 2048, (void*)(&counterArgs), 0, NULL);
             break;
         case SW_2_PRESSED:

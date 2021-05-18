@@ -17,7 +17,7 @@ void isr_handler(void *value) {
 Output RELAY1 = {
     .name = "RELAY1",
     .pinNumber = RELAY_1_PIN,
-    .switchMode = SWITCH_MODE_TIMER,
+    .switchMode = SWITCH_MODE_SIMPLE,
     .delayMicros = 0
 };
 
