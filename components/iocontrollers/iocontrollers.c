@@ -7,6 +7,7 @@
 static const char* TAG = "iocontroller";
 
 ESP_EVENT_DEFINE_BASE(INPUT_BASE);
+ESP_EVENT_DEFINE_BASE(OUTPUT_BASE);
 
 void isr_handler(void *value) {
     uint8_t mask = (uint8_t)value;
@@ -79,12 +80,82 @@ esp_err_t io_controllers_output_activate(const Output *output, const uint8_t val
     switch (output->switchMode) {
         case SWITCH_MODE_SIMPLE: {
             //post event
+            if(output == &RELAY1) {
+                if (value == 1) {
+                    esp_event_post(OUTPUT_BASE, RELAY1_ON, NULL, 0, portMAX_DELAY);
+                } else {
+                    esp_event_post(OUTPUT_BASE, RELAY1_OFF, NULL, 0, portMAX_DELAY);
+                }
+            }
+            if(output == &RELAY2) {
+                if (value == 1) {
+                    esp_event_post(OUTPUT_BASE, RELAY2_ON, NULL, 0, portMAX_DELAY);
+                } else {
+                    esp_event_post(OUTPUT_BASE, RELAY2_OFF, NULL, 0, portMAX_DELAY);
+                }
+            }
+            if(output == &OPTO1) {
+                if (value == 1) {
+                    esp_event_post(OUTPUT_BASE, OPTO1_ON, NULL, 0, portMAX_DELAY);
+                } else {
+                    esp_event_post(OUTPUT_BASE, OPTO1_OFF, NULL, 0, portMAX_DELAY);
+                }
+            }
+            if(output == &OPTO2) {
+                if (value == 1) {
+                    esp_event_post(OUTPUT_BASE, OPTO2_ON, NULL, 0, portMAX_DELAY);
+                } else {
+                    esp_event_post(OUTPUT_BASE, OPTO2_OFF, NULL, 0, portMAX_DELAY);
+                }
+            }
+            if(output == &GREEN_LED1) {
+                if (value == 1) {
+                    esp_event_post(OUTPUT_BASE, GREEN_LED1_ON, NULL, 0, portMAX_DELAY);
+                } else {
+                    esp_event_post(OUTPUT_BASE, GREEN_LED1_OFF, NULL, 0, portMAX_DELAY);
+                }
+            }
             return gpio_set_level(output->pinNumber, value);
         }
         case SWITCH_MODE_TOGGLE: {
             int lvl = gpio_get_level(output->pinNumber);
             int newLvl = (lvl ^ 1);
             //post event
+            if(output == &RELAY1) {
+                if (newLvl == 1) {
+                    esp_event_post(OUTPUT_BASE, RELAY1_ON, NULL, 0, portMAX_DELAY);
+                } else {
+                    esp_event_post(OUTPUT_BASE, RELAY1_OFF, NULL, 0, portMAX_DELAY);
+                }
+            }
+            if(output == &RELAY2) {
+                if (newLvl == 1) {
+                    esp_event_post(OUTPUT_BASE, RELAY2_ON, NULL, 0, portMAX_DELAY);
+                } else {
+                    esp_event_post(OUTPUT_BASE, RELAY2_OFF, NULL, 0, portMAX_DELAY);
+                }
+            }
+            if(output == &OPTO1) {
+                if (newLvl == 1) {
+                    esp_event_post(OUTPUT_BASE, OPTO1_ON, NULL, 0, portMAX_DELAY);
+                } else {
+                    esp_event_post(OUTPUT_BASE, OPTO1_OFF, NULL, 0, portMAX_DELAY);
+                }
+            }
+            if(output == &OPTO2) {
+                if (newLvl == 1) {
+                    esp_event_post(OUTPUT_BASE, OPTO2_ON, NULL, 0, portMAX_DELAY);
+                } else {
+                    esp_event_post(OUTPUT_BASE, OPTO2_OFF, NULL, 0, portMAX_DELAY);
+                }
+            }
+            if(output == &GREEN_LED1) {
+                if (newLvl == 1) {
+                    esp_event_post(OUTPUT_BASE, GREEN_LED1_ON, NULL, 0, portMAX_DELAY);
+                } else {
+                    esp_event_post(OUTPUT_BASE, GREEN_LED1_OFF, NULL, 0, portMAX_DELAY);
+                }
+            }
             return gpio_set_level(output->pinNumber, newLvl);
         }
         case SWITCH_MODE_TIMER: {
