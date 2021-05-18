@@ -277,9 +277,13 @@ void mqtt_init(void)
     temp_sensor_turn_on();
     xTaskCreate(measure_temperature_task, "periodical temp check", 2048, NULL, uxTaskPriorityGet(NULL), NULL);
     esp_mqtt_client_start(client);
-    //additional clients for smartnest.cz
+    //additional clients for smartnest.cz to be able to report offline status in lw message
+    esp_mqtt_client_handle_t client_relay2;
     esp_mqtt_client_handle_t client_temp;
     esp_mqtt_client_handle_t client_input;
+    mqtt_cfg.client_id = relay2_id;
+    client_temp = esp_mqtt_client_init(&mqtt_cfg);
+    esp_mqtt_client_start(client_temp);
     mqtt_cfg.client_id = temp_id;
     client_temp = esp_mqtt_client_init(&mqtt_cfg);
     esp_mqtt_client_start(client_temp);
