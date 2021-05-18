@@ -17,7 +17,7 @@ void isr_handler(void *value) {
 Output RELAY1 = {
     .name = "RELAY1",
     .pinNumber = RELAY_1_PIN,
-    .switchMode = SWITCH_MODE_SIMPLE,
+    .switchMode = SWITCH_MODE_TIMER,
     .delayMicros = 0
 };
 
@@ -76,98 +76,79 @@ const Output GREEN_LED2 = {
     .delayMicros = 0
 };
 
+esp_err_t io_controllers_output_turn_on(const Output *output) {
+    esp_err_t res = gpio_set_level(output->pinNumber, 1);
+    if (res == ESP_OK) {
+        if (output == &RELAY1) {
+            esp_event_post(OUTPUT_BASE, RELAY1_ON, NULL, 0, portMAX_DELAY); 
+        }
+        if (output == &RELAY2) {
+            esp_event_post(OUTPUT_BASE, RELAY2_ON, NULL, 0, portMAX_DELAY);
+        }
+        if (output == &OPTO1) {
+            esp_event_post(OUTPUT_BASE, OPTO1_ON, NULL, 0, portMAX_DELAY); 
+        }
+        if (output == &OPTO2) {
+            esp_event_post(OUTPUT_BASE, OPTO2_ON, NULL, 0, portMAX_DELAY);
+        }
+        if (output == &GREEN_LED1) {
+            esp_event_post(OUTPUT_BASE, GREEN_LED1_ON, NULL, 0, portMAX_DELAY);
+        }
+        if (output == &GREEN_LED2) {
+            esp_event_post(OUTPUT_BASE, GREEN_LED2_ON, NULL, 0, portMAX_DELAY);
+        }
+    }
+    return res;
+}
+
+esp_err_t io_controllers_output_turn_off(const Output *output) {
+    esp_err_t res = gpio_set_level(output->pinNumber, 0);
+    if (res == ESP_OK) {
+        if (output == &RELAY1) {
+            esp_event_post(OUTPUT_BASE, RELAY1_OFF, NULL, 0, portMAX_DELAY); 
+        }
+        if (output == &RELAY2) {
+            esp_event_post(OUTPUT_BASE, RELAY2_OFF, NULL, 0, portMAX_DELAY);
+        }
+        if (output == &OPTO1) {
+            esp_event_post(OUTPUT_BASE, OPTO1_OFF, NULL, 0, portMAX_DELAY); 
+        }
+        if (output == &OPTO2) {
+            esp_event_post(OUTPUT_BASE, OPTO2_OFF, NULL, 0, portMAX_DELAY);
+        }
+        if (output == &GREEN_LED1) {
+            esp_event_post(OUTPUT_BASE, GREEN_LED1_OFF, NULL, 0, portMAX_DELAY);
+        }
+        if (output == &GREEN_LED2) {
+            esp_event_post(OUTPUT_BASE, GREEN_LED2_OFF, NULL, 0, portMAX_DELAY);
+        }
+    }
+    return res;
+}
+
 esp_err_t io_controllers_output_activate(const Output *output, const uint8_t value) {
     switch (output->switchMode) {
         case SWITCH_MODE_SIMPLE: {
-            //post event
-            if(output == &RELAY1) {
-                if (value == 1) {
-                    esp_event_post(OUTPUT_BASE, RELAY1_ON, NULL, 0, portMAX_DELAY);
-                } else {
-                    esp_event_post(OUTPUT_BASE, RELAY1_OFF, NULL, 0, portMAX_DELAY);
-                }
+            if (value == 1) {
+                return io_controllers_output_turn_on(output);
+            } else {
+                return io_controllers_output_turn_off(output);
             }
-            if(output == &RELAY2) {
-                if (value == 1) {
-                    esp_event_post(OUTPUT_BASE, RELAY2_ON, NULL, 0, portMAX_DELAY);
-                } else {
-                    esp_event_post(OUTPUT_BASE, RELAY2_OFF, NULL, 0, portMAX_DELAY);
-                }
-            }
-            if(output == &OPTO1) {
-                if (value == 1) {
-                    esp_event_post(OUTPUT_BASE, OPTO1_ON, NULL, 0, portMAX_DELAY);
-                } else {
-                    esp_event_post(OUTPUT_BASE, OPTO1_OFF, NULL, 0, portMAX_DELAY);
-                }
-            }
-            if(output == &OPTO2) {
-                if (value == 1) {
-                    esp_event_post(OUTPUT_BASE, OPTO2_ON, NULL, 0, portMAX_DELAY);
-                } else {
-                    esp_event_post(OUTPUT_BASE, OPTO2_OFF, NULL, 0, portMAX_DELAY);
-                }
-            }
-            if(output == &GREEN_LED1) {
-                if (value == 1) {
-                    esp_event_post(OUTPUT_BASE, GREEN_LED1_ON, NULL, 0, portMAX_DELAY);
-                } else {
-                    esp_event_post(OUTPUT_BASE, GREEN_LED1_OFF, NULL, 0, portMAX_DELAY);
-                }
-            }
-            return gpio_set_level(output->pinNumber, value);
         }
         case SWITCH_MODE_TOGGLE: {
             int lvl = gpio_get_level(output->pinNumber);
             int newLvl = (lvl ^ 1);
             //post event
-            if(output == &RELAY1) {
-                if (newLvl == 1) {
-                    esp_event_post(OUTPUT_BASE, RELAY1_ON, NULL, 0, portMAX_DELAY);
-                } else {
-                    esp_event_post(OUTPUT_BASE, RELAY1_OFF, NULL, 0, portMAX_DELAY);
-                }
+            if (newLvl == 1) {
+                return io_controllers_output_turn_on(output);
+            } else {
+                return io_controllers_output_turn_off(output);
             }
-            if(output == &RELAY2) {
-                if (newLvl == 1) {
-                    esp_event_post(OUTPUT_BASE, RELAY2_ON, NULL, 0, portMAX_DELAY);
-                } else {
-                    esp_event_post(OUTPUT_BASE, RELAY2_OFF, NULL, 0, portMAX_DELAY);
-                }
-            }
-            if(output == &OPTO1) {
-                if (newLvl == 1) {
-                    esp_event_post(OUTPUT_BASE, OPTO1_ON, NULL, 0, portMAX_DELAY);
-                } else {
-                    esp_event_post(OUTPUT_BASE, OPTO1_OFF, NULL, 0, portMAX_DELAY);
-                }
-            }
-            if(output == &OPTO2) {
-                if (newLvl == 1) {
-                    esp_event_post(OUTPUT_BASE, OPTO2_ON, NULL, 0, portMAX_DELAY);
-                } else {
-                    esp_event_post(OUTPUT_BASE, OPTO2_OFF, NULL, 0, portMAX_DELAY);
-                }
-            }
-            if(output == &GREEN_LED1) {
-                if (newLvl == 1) {
-                    esp_event_post(OUTPUT_BASE, GREEN_LED1_ON, NULL, 0, portMAX_DELAY);
-                } else {
-                    esp_event_post(OUTPUT_BASE, GREEN_LED1_OFF, NULL, 0, portMAX_DELAY);
-                }
-            }
-            if(output == &GREEN_LED2) {
-                if (newLvl == 1) {
-                    esp_event_post(OUTPUT_BASE, GREEN_LED2_ON, NULL, 0, portMAX_DELAY);
-                } else {
-                    esp_event_post(OUTPUT_BASE, GREEN_LED2_OFF, NULL, 0, portMAX_DELAY);
-                }
-            }
-            return gpio_set_level(output->pinNumber, newLvl);
         }
         case SWITCH_MODE_TIMER: {
-            //post event
-            ESP_LOGI(TAG, "timer mode is not implemented");
+            io_controllers_output_turn_on(output);
+            vTaskDelay(100);
+            io_controllers_output_turn_off(output);
             break;
         }
     }
