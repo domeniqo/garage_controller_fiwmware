@@ -9,6 +9,10 @@ void mqtt_subscribed_action_event_handler(void *handler_args, esp_event_base_t b
 
 void mqtt_basic_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
 
+void mqtt_outputs_publish_handler(void* event_handler_arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
+
+void mqtt_inputs_publish_handler(void* event_handler_arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
+
 void mqtt_init(void);
 
 #endif //MQTT_HANDLER_H

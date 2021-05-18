@@ -4,6 +4,7 @@
 #include "esp_netif.h"
 #include "freertos/FreeRTOS.h"
 #include "freeRTOS/task.h"
+#include "iocontrollers.h"
 #include <math.h>
 #include "mqtt_client.h"
 #include "mqtt_handler.h"
@@ -28,7 +29,6 @@ void mqtt_subscribed_action_event_handler(void *handler_args, esp_event_base_t b
     char topic[128];
     ESP_LOGI(TAG, "Action event handler");
     esp_mqtt_event_handle_t event = event_data;
-    esp_mqtt_client_handle_t client = event->client;
     if ((esp_mqtt_event_id_t)event_id != MQTT_EVENT_DATA) {
         ESP_LOGE(TAG, "Optained unknown event id. This hanlder is for handling subsribed actions.");
         return;
@@ -38,8 +38,10 @@ void mqtt_subscribed_action_event_handler(void *handler_args, esp_event_base_t b
     if (strncmp(strcat(topic, "/directive/powerState"), event->topic, event->topic_len) == 0) {
         if (strncmp(event->data, "ON", event->data_len) == 0) {
             ESP_LOGD(TAG, "Turning ON relay1");
+            io_controllers_output_activate(&RELAY1, 1);
         } else if (strncmp(event->data, "OFF", event->data_len) == 0) {
             ESP_LOGD(TAG, "Turning OFF relay1");
+            io_controllers_output_activate(&RELAY1, 0);
         } else {
             goto fail;
         }
@@ -106,6 +108,50 @@ void mqtt_basic_event_handler(void *handler_args, esp_event_base_t base, int32_t
     }
 }
 
+void mqtt_outputs_publish_handler(void* event_handler_arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+    esp_mqtt_client_handle_t client = event_handler_arg;
+    if (event_base != OUTPUT_BASE) {
+        ESP_LOGE(TAG, "Bad handler type");
+        return;
+    }
+    char topic[128];
+    int msg_id;
+    switch (event_id) {
+        case RELAY1_ON:
+            strcpy(topic, relay1_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+        case RELAY1_OFF:
+            strcpy(topic, relay1_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+    }
+}
+
+void mqtt_inputs_publish_handler(void* event_handler_arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+    esp_mqtt_client_handle_t client = event_handler_arg;
+    if (event_base != INPUT_BASE) {
+        ESP_LOGE(TAG, "Bad handler type");
+        return;
+    }
+    char topic[128];
+    int msg_id;
+    switch (event_id) {
+        case INPUT_1_PRESSED:
+            strcpy(topic, door_magnet_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "true", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+        case INPUT_1_RELEASED:
+            strcpy(topic, door_magnet_id);
+            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "false", 0, 1, 1);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+    }
+}
+
 //round to nearest half degree
 static double temperature_round(double measured_value) {
     ESP_LOGD(TAG, "Rounding value %.2f", measured_value);
@@ -166,6 +212,8 @@ void mqtt_init(void)
     client = esp_mqtt_client_init(&mqtt_cfg);
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_basic_event_handler, NULL);
     esp_mqtt_client_register_event(client, MQTT_EVENT_DATA, mqtt_subscribed_action_event_handler, NULL);
+    esp_event_handler_instance_register(OUTPUT_BASE, ESP_EVENT_ANY_ID, mqtt_outputs_publish_handler, client, NULL);
+    esp_event_handler_instance_register(INPUT_BASE, ESP_EVENT_ANY_ID, mqtt_inputs_publish_handler, client, NULL);
     temp_sensor_init();
     temp_sensor_turn_on();
     xTaskCreate(measure_temperature_task, "periodical temp check", 2048, NULL, uxTaskPriorityGet(NULL), NULL);
