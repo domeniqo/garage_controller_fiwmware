@@ -13,7 +13,7 @@
 
 static const char* temp_id = "6050bdd81d065424b548c632";
 static const char* relay1_id = "6048e887d1c2d77d1bd58f16";
-static const char* relay2_id = "6048e887d1c2d77d1bd58f17";
+static const char* relay2_id = "60490813d1c2d77d1bd58f20";
 static const char* opto1_id = "6048e887d1c2d77d1bd58f18";
 static const char* opto2_id = "6048e887d1c2d77d1bd58f19";
 static const char* door_magnet_id = "604907d8d1c2d77d1bd58f1f";
@@ -108,6 +108,9 @@ void mqtt_basic_event_handler(void *handler_args, esp_event_base_t base, int32_t
         strcpy(topic, relay1_id);
         msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/online"), "true", 0, 1, 1);
         ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+        strcpy(topic, relay2_id);
+        msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/online"), "true", 0, 1, 1);
+        ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
         strcpy(topic, temp_id);
         msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/online"), "true", 0, 1, 1);
         ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
@@ -119,12 +122,6 @@ void mqtt_basic_event_handler(void *handler_args, esp_event_base_t base, int32_t
         msg_id = esp_mqtt_client_subscribe(client, strcat(topic, "/directive/powerState"), 1);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
         strcpy(topic, relay2_id);
-        msg_id = esp_mqtt_client_subscribe(client, strcat(topic, "/directive/powerState"), 1);
-        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-        strcpy(topic, opto1_id);
-        msg_id = esp_mqtt_client_subscribe(client, strcat(topic, "/directive/powerState"), 1);
-        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-        strcpy(topic, opto2_id);
         msg_id = esp_mqtt_client_subscribe(client, strcat(topic, "/directive/powerState"), 1);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
         break;
@@ -172,42 +169,22 @@ void mqtt_outputs_publish_handler(void* event_handler_arg, esp_event_base_t even
         case RELAY1_ON:
             strcpy(topic, relay1_id);
             msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d, data=%s", msg_id, "ON");
             break;
         case RELAY1_OFF:
             strcpy(topic, relay1_id);
             msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d, data=%s", msg_id, "OFF");
             break;
         case RELAY2_ON:
             strcpy(topic, relay2_id);
             msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d, data=%s", msg_id, "ON");
             break;
         case RELAY2_OFF:
             strcpy(topic, relay2_id);
             msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-            break;
-        case OPTO1_ON:
-            strcpy(topic, opto1_id);
-            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-            break;
-        case OPTO1_OFF:
-            strcpy(topic, opto1_id);
-            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-            break;
-        case OPTO2_ON:
-            strcpy(topic, opto2_id);
-            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "ON", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-            break;
-        case OPTO2_OFF:
-            strcpy(topic, opto2_id);
-            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/powerState"), "OFF", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d, data=%s", msg_id, "OFF");
             break;
     }
 }
@@ -224,22 +201,12 @@ void mqtt_inputs_publish_handler(void* event_handler_arg, esp_event_base_t event
         case INPUT_1_PRESSED:
             strcpy(topic, door_magnet_id);
             msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "true", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d, data=%s", msg_id, "true");
             break;
         case INPUT_1_RELEASED:
             strcpy(topic, door_magnet_id);
             msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "false", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-            break;
-        case INPUT_2_PRESSED:
-            strcpy(topic, door_magnet2_id);
-            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "true", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-            break;
-        case INPUT_2_RELEASED:
-            strcpy(topic, door_magnet2_id);
-            msg_id = esp_mqtt_client_publish(client, strcat(topic, "/report/detectionState"), "false", 0, 1, 1);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d, data=%s", msg_id, "false");
             break;
     }
 }
@@ -310,4 +277,13 @@ void mqtt_init(void)
     temp_sensor_turn_on();
     xTaskCreate(measure_temperature_task, "periodical temp check", 2048, NULL, uxTaskPriorityGet(NULL), NULL);
     esp_mqtt_client_start(client);
+    //additional clients for smartnest.cz
+    esp_mqtt_client_handle_t client_temp;
+    esp_mqtt_client_handle_t client_input;
+    mqtt_cfg.client_id = temp_id;
+    client_temp = esp_mqtt_client_init(&mqtt_cfg);
+    esp_mqtt_client_start(client_temp);
+    mqtt_cfg.client_id = door_magnet_id;
+    client_input = esp_mqtt_client_init(&mqtt_cfg);
+    esp_mqtt_client_start(client_input);
 }
