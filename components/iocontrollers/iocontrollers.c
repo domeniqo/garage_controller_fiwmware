@@ -156,6 +156,13 @@ esp_err_t io_controllers_output_activate(const Output *output, const uint8_t val
                     esp_event_post(OUTPUT_BASE, GREEN_LED1_OFF, NULL, 0, portMAX_DELAY);
                 }
             }
+            if(output == &GREEN_LED2) {
+                if (newLvl == 1) {
+                    esp_event_post(OUTPUT_BASE, GREEN_LED2_ON, NULL, 0, portMAX_DELAY);
+                } else {
+                    esp_event_post(OUTPUT_BASE, GREEN_LED2_OFF, NULL, 0, portMAX_DELAY);
+                }
+            }
             return gpio_set_level(output->pinNumber, newLvl);
         }
         case SWITCH_MODE_TIMER: {
