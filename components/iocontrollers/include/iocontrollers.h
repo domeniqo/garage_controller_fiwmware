@@ -92,6 +92,10 @@ void check_inputs_task(void *arg);
  * 
  * */
 void isr_handler(void *value);
+//turning on output and firing event
+esp_err_t io_controllers_output_turn_on(const Output *output);
+//turning off output and firing event
+esp_err_t io_controllers_output_turn_off(const Output *output);
 //activates output accordignly its settings of switch mode (SIMPLE, TIMER, TOGGLE)
 esp_err_t io_controllers_output_activate(const Output *output, const uint8_t value);
 //just mapping function to gpio_read
