@@ -257,7 +257,7 @@ void mqtt_init(void)
     char topic[128];
     strcpy(topic, relay1_id);
     esp_mqtt_client_config_t mqtt_cfg = {
-        .uri = "mqtt://192.168.1.22:1883",
+        .uri = "mqtt://3.122.209.170:1883",
         .username = "domeniqo",
         .password = "Sasenka1",
         .client_id = relay1_id,
