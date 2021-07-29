@@ -61,16 +61,16 @@ void ethernet_init() {
     //ESP_ERROR_CHECK(esp_event_loop_create_default());
     esp_netif_config_t cfg = ESP_NETIF_DEFAULT_ETH();
     esp_netif_t *eth_netif = esp_netif_new(&cfg);
-    //esp_netif_dhcpc_stop(eth_netif);
-    //char* ip= "192.168.1.210";
-    //char* gateway = "192.168.1.1";
-    //char* netmask = "255.255.255.0";
-    //esp_netif_ip_info_t info_t;
-    //memset(&info_t, 0, sizeof(esp_netif_ip_info_t));
-    //ip4addr_aton((const char *)ip, &info_t.ip.addr);
-    //ip4addr_aton((const char *)gateway, &info_t.gw.addr);
-    //ip4addr_aton((const char *)netmask, &info_t.netmask.addr);
-    //esp_netif_set_ip_info(eth_netif, &info_t);
+    esp_netif_dhcpc_stop(eth_netif);
+    char* ip= "192.168.1.210";
+    char* gateway = "192.168.1.1";
+    char* netmask = "255.255.255.0";
+    esp_netif_ip_info_t info_t;
+    memset(&info_t, 0, sizeof(esp_netif_ip_info_t));
+    ip4addr_aton((const char *)ip, &info_t.ip.addr);
+    ip4addr_aton((const char *)gateway, &info_t.gw.addr);
+    ip4addr_aton((const char *)netmask, &info_t.netmask.addr);
+    esp_netif_set_ip_info(eth_netif, &info_t);
     // Set default handlers to process TCP/IP stuffs
     ESP_ERROR_CHECK(esp_eth_set_default_handlers(eth_netif));
     // Register user defined event handers
